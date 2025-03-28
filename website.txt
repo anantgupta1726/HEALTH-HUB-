@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthHub - Medicine, Health, Food & BMI Checker</title>
+    <style>
+        :root {
+            --color1: #FF6B6B; /* Coral */
+            --color2: #4ECDC4; /* Teal */
+            --color3: #FFD166; /* Yellow */
+            --color4: #06D6A0; /* Green */
+            --color5: #118AB2; /* Blue */
+            --color6: #A05CFF; /* Purple */
+            --text-color: #333;
+            --light-bg: #F7FFF7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(45deg, var(--color1), var(--color6));
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn.active {
+            color: white;
+        }
+
+        .tab-btn:nth-child(1).active { background: var(--color1); }
+        .tab-btn:nth-child(2).active { background: var(--color5); }
+        .tab-btn:nth-child(3).active { background: var(--color4); }
+        .tab-btn:nth-child(4).active { background: var(--color6); }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed;
+        }
+
+        #tab1 h2 { color: var(--color1); border-color: var(--color1); }
+        #tab2 h2 { color: var(--color5); border-color: var(--color5); }
+        #tab3 h2 { color: var(--color4); border-color: var(--color4); }
+        #tab4 h2 { color: var(--color6); border-color: var(--color6); }
+
+        .upload-box {
+            border: 2px dashed var(--color3);
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background: rgba(255, 214, 102, 0.1);
+        }
+
+        .upload-box i {
+            font-size: 50px;
+            color: var(--color3);
+            margin-bottom: 15px;
+        }
+
+        #med-image {
+            display: none;
+        }
+
+        .upload-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--color3);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .upload-label:hover {
+            background: #FFC233;
+        }
+
+        .result-box {
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid;
+            margin-top: 20px;
+            display: none;
+        }
+
+        #med-result { border-color: var(--color1); background: rgba(255, 107, 107, 0.1); }
+        #health-result { border-color: var(--color5); background: rgba(17, 138, 178, 0.1); }
+        #bmi-result { border-color: var(--color6); background: rgba(160, 92, 255, 0.1); }
+
+        textarea, input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 12px 25px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        #tab1 button { background: var(--color1); }
+        #tab2 button { background: var(--color5); }
+        #tab4 button { background: var(--color6); }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .remedy-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            border-left: 4px solid;
+        }
+
+        #tab3 .remedy-card { border-color: var(--color4); }
+        #tab2 .remedy-card { border-color: var(--color5); }
+
+        .remedy-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .bmi-inputs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .bmi-inputs input {
+            flex: 1;
+        }
+
+        .bmi-scale {
+            display: flex;
+            margin-top: 20px;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .scale-segment {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            .bmi-inputs {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-heartbeat"></i> HealthHub</h1>
+            <p>Your complete health assistant</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('tab1')"><i class="fas fa-pills"></i> Medicine</button>
+            <button class="tab-btn" onclick="openTab('tab2')"><i class="fas fa-stethoscope"></i> Health Solver</button>
+            <button class="tab-btn" onclick="openTab('tab3')"><i class="fas fa-utensils"></i> Food Check</button>
+            <button class="tab-btn" onclick="openTab('tab4')"><i class="fas fa-weight"></i> BMI Calculator</button>
+        </div>
+
+        <!-- TAB 1: Medicine Checker -->
+        <div id="tab1" class="tab-content active">
+            <h2><i class="fas fa-camera"></i> Upload Medicine Photo</h2>
+            <div class="upload-box">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Upload a photo of your medicine (front/back)</p>
+                <input type="file" id="med-image" accept="image/*">
+                <label for="med-image" class="upload-label">Choose Image</label>
+            </div>
+
+            <div class="result-box" id="med-result">
+                <h3>Medicine Details</h3>
+                <p><strong>Name:</strong> <span id="med-name">Paracetamol 500mg</span></p>
+                <p><strong>Uses:</strong> <span id="med-uses">Fever, headache, mild pain</span></p>
+                <p><strong>Dosage:</strong> <span id="med-dosage">1 tablet every 4-6 hours (max 4g/day)</span></p>
+                <p><strong>Side Effects:</strong> <span id="med-sidefx">Rare at normal doses</span></p>
+            </div>
+        </div>
+
+        <!-- TAB 2: Health Problem Solver -->
+        <div id="tab2" class="tab-content">
+            <h2><i class="fas fa-comment-medical"></i> Describe Your Problem</h2>
+            <p>Example: "I have fever, headache, and body pain for 2 days"</p>
+            <textarea id="health-problem" rows="4" placeholder="Type your symptoms here..."></textarea>
+            <button onclick="analyzeProblem()"><i class="fas fa-search"></i> Analyze</button>
+
+            <div class="result-box" id="health-result">
+                <h3>Possible Condition: <span id="condition">Common Cold</span></h3>
+                <p><strong>Symptoms:</strong> <span id="symptoms">Fever, headache, runny nose</span></p>
+                <div class="remedy-card">
+                    <h3><i class="fas fa-lightbulb"></i> Recommended Remedies</h3>
+                    <p id="remedies">1. Take Paracetamol for fever<br>2. Drink warm fluids<br>3. Rest</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Food Authenticity Checker -->
+        <div id="tab3" class="tab-content">
+            <h2><i class="fas fa-vial"></i> Test Your Food</h2>
+            <p>Select a food item to check if it's real or fake:</p>
+            
+            <div class="remedy-card">
+                <h3><i class="fas fa-cheese"></i> Paneer / Tofu</h3>
+                <p><strong>Test:</strong> Add 1-2 drops of <strong>iodine solution</strong>.</p>
+                <p><strong>Real:</strong> No color change (remains brown).</p>
+                <p><strong>Fake (starch added):</strong> Turns <strong>blue-black</strong>.</p>
+            </div>
+
+            <div class="remedy-card">
+                <h3><i class="fas fa-wine-bottle"></i> Honey</h3>
+                <p><strong>Test:</strong> Drop honey in water.</p>
+                <p><strong>Real:</strong> Stays intact, sinks slowly.</p>
+                <p><strong>Fake:</strong> Dissolves quickly.</p>
+            </div>
+
+            <div class="remedy-card">
+                <h3><i class="fas fa-pepper-hot"></i> Turmeric Powder</h3>
+                <p><strong>Test:</strong> Mix with water, add <strong>baking soda</strong>.</p>
+                <p><strong>Real:</strong> Turns <strong>red</strong>.</p>
+                <p><strong>Fake:</strong> No color change.</p>
+            </div>
+        </div>
+
+        <!-- TAB 4: BMI Calculator -->
+        <div id="tab4" class="tab-content">
+            <h2><i class="fas fa-calculator"></i> BMI Calculator</h2>
+            <div class="bmi-inputs">
+                <input type="number" id="height" placeholder="Height (cm)" min="100" max="250">
+                <input type="number" id="weight" placeholder="Weight (kg)" min="30" max="300">
+            </div>
+            <button onclick="calculateBMI()"><i class="fas fa-calculator"></i> Calculate BMI</button>
+
+            <div class="result-box" id="bmi-result">
+                <h3>Your Results</h3>
+                <p><strong>BMI:</strong> <span id="bmi-value">0</span> (<span id="bmi-category">-</span>)</p>
+                <p id="bmi-advice">Enter your height and weight to calculate.</p>
+                
+                <div class="bmi-scale">
+                    <div class="scale-segment" style="background: #4CAF50;">Underweight<br>&lt;18.5</div>
+                    <div class="scale-segment" style="background: #8BC34A;">Normal<br>18.5-25</div>
+                    <div class="scale-segment" style="background: #FFC107;">Overweight<br>25-30</div>
+                    <div class="scale-segment" style="background: #FF9800;">Obese I<br>30-35</div>
+                    <div class="scale-segment" style="background: #F44336;">Obese II<br>&gt;35</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Note: This is for informational purposes only. Consult a doctor for medical advice.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Switch tabs
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Medicine Checker (Mock Function)
+        document.getElementById('med-image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                alert("Image uploaded! (In a real app, this would use AI to detect medicine details)");
+                document.getElementById('med-result').style.display = 'block';
+            }
+        });
+
+        // Health Problem Solver (Mock Function)
+        function analyzeProblem() {
+            const problem = document.getElementById('health-problem').value.toLowerCase();
+            let condition, symptoms, remedies;
+
+            if (problem.includes('fever') && problem.includes('cold')) {
+                condition = "Common Cold / Flu";
+                symptoms = "Fever, runny nose, sore throat";
+                remedies = "1. Take Paracetamol (500mg) every 6 hours<br>2. Drink warm water with honey<br>3. Rest";
+            } 
+            else if (problem.includes('headache')) {
+                condition = "Headache";
+                symptoms = "Head pain, dizziness";
+                remedies = "1. Drink water<br>2. Take a 20-min nap<br>3. Avoid screen time";
+            }
+            else {
+                condition = "General Discomfort";
+                symptoms = "Not specified";
+                remedies = "1. Drink more water<br>2. Monitor symptoms<br>3. Consult a doctor if severe";
+            }
+
+            document.getElementById('condition').textContent = condition;
+            document.getElementById('symptoms').textContent = symptoms;
+            document.getElementById('remedies').innerHTML = remedies;
+            document.getElementById('health-result').style.display = 'block';
+        }
+
+        // BMI Calculator
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById('height').value) / 100; // Convert cm to m
+            const weight = parseFloat(document.getElementById('weight').value);
+            
+            if (!height || !weight) {
+                alert("Please enter both height and weight");
+                return;
+            }
+
+            const bmi = (weight / (height * height)).toFixed(1);
+            let category, advice;
+
+            if (bmi < 18.5) {
+                category = "Underweight";
+                advice = "Consider consulting a nutritionist to gain weight healthily.";
+            } else if (bmi < 25) {
+                category = "Normal weight";
+                advice = "Great! Maintain your healthy lifestyle.";
+            } else if (bmi < 30) {
+                category = "Overweight";
+                advice = "Consider moderate exercise and balanced diet.";
+            } else if (bmi < 35) {
+                category = "Obese (Class I)";
+                advice = "Consult a doctor for weight management advice.";
+            } else {
+                category = "Obese (Class II)";
+                advice = "Please seek medical advice for healthy weight loss.";
+            }
+
+            document.getElementById('bmi-value').textContent = bmi;
+            document.getElementById('bmi-category').textContent = category;
+            document.getElementById('bmi-advice').textContent = advice;
+            document.getElementById('bmi-result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
